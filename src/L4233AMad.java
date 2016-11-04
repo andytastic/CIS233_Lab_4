@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  * Created by andy on 11/3/2016.
  */
@@ -7,8 +9,9 @@ public class L4233AMad {
     //                    SHELL SORT
     // ====================================================
 
-    public static <AnyType extends Comparable<? super AnyType>> void shellsort( AnyType [ ] a, int gapLength )
+    public static <AnyType extends Comparable<? super AnyType>> void shellsort( AnyType [ ] a )
     {
+        // todo: make gapLength set gap sequence?
         for( int gap = a.length / 2; gap > 0;
              gap = gap == 2 ? 1 : (int) ( gap / 2.2 ) )
             for( int i = gap; i < a.length; i++ )
@@ -181,8 +184,97 @@ public class L4233AMad {
     //                        MAIN
     // ====================================================
 
+    private static long SECOND_FACTOR = 1000000000;
+    private static int MAX_VALUE = 100000;
+    private static int FIRST_SIZE = 1000000;
+    private static int SECOND_SIZE = 5000000;
+    private static int THIRD_SIZE = 10000000;
+
+    private static <AnyType extends Comparable<? super AnyType>> void resetArray( AnyType arr[], AnyType copyArr[] )
+    {
+        for( int i = 0; i < copyArr.length; i++ ) {
+            copyArr[ i ] = arr[ i ];
+        }
+    }
+
+    private static <AnyType extends Comparable<? super AnyType>> void printFirst100( AnyType arr[] )
+    {
+        int count = 0;
+
+        for( int i = 0; i < 100; i++ )
+        {
+            System.out.print( arr[ i ] + " " );
+            if( count == 25 )
+            {
+                System.out.print( "\n" );
+                count = 1;
+            }
+            else
+                count++;
+
+        }
+        if( count != 0 )
+            System.out.println();
+        System.out.println();
+    }
+
     public static void main( String [] args )
     {
+        /* todo: generate arrays
+         * todo: each array should be at least 2x the previous; at least 0.5 seconds to complete sort
+         * todo: 3 arrays, make copy each time probably? have to run 3 times each sort
+         * todo: write results to a .csv?
+         */
 
+        Integer [] arr1 = new Integer [ FIRST_SIZE ];
+        Integer [] arr2 = new Integer [ SECOND_SIZE ];
+        Integer [] arr3 = new Integer [ THIRD_SIZE ];
+        double begin, end;
+        Random r = new Random();
+
+        System.out.println("Populating arrays...");
+        for( int i = 0; i < arr1.length; i++ )
+        {
+            arr1[ i ] = new Integer( r.nextInt( MAX_VALUE ) );
+        }
+        System.out.print("arr1 popluated... ");
+
+        for( int i = 0; i < arr2.length; i++ )
+        {
+            arr2[ i ] = new Integer( r.nextInt( MAX_VALUE ) );
+        }
+        System.out.print("arr2 popluated... ");
+
+        for( int i = 0; i < arr3.length; i++ )
+        {
+            arr3[ i ] = new Integer( r.nextInt( MAX_VALUE ) );
+        }
+        System.out.println("arr3 popluated... ");
+
+        System.out.println("Population completed.");
+
+        Integer [] copyArr = new Integer [ arr1.length ];
+
+        resetArray( arr1, copyArr );
+
+        begin = System.nanoTime();
+        shellsort( copyArr );
+        end = ( System.nanoTime() - begin ) / SECOND_FACTOR;
+        System.out.print("Shellsort time taken: " + end + " seconds\nProof: ");
+        printFirst100( copyArr );
+
+        resetArray( arr1, copyArr );
+        begin = System.nanoTime();
+        mergeSort( copyArr );
+        end = ( System.nanoTime() - begin ) / SECOND_FACTOR;
+        System.out.print("Mergesort time taken: " + end + " seconds\nProof: ");
+        printFirst100( copyArr );
+
+        resetArray( arr1, copyArr );
+        begin = System.nanoTime();
+        heapsort( copyArr );
+        end = ( System.nanoTime() - begin ) / SECOND_FACTOR;
+        System.out.print("Heapsort time taken: " + end + " seconds\nProof: ");
+        printFirst100( copyArr );
     }
 }
