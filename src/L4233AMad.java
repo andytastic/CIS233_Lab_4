@@ -13,7 +13,6 @@ public class L4233AMad {
     // ====================================================
 
     public static <AnyType extends Comparable<? super AnyType>> void shellsort(AnyType[] a) {
-        // todo: make gapLength set gap sequence?
         for (int gap = a.length / 2; gap > 0; gap = gap / 2 )
             for (int i = gap; i < a.length; i++) {
                 AnyType tmp = a[i];
@@ -364,11 +363,6 @@ public class L4233AMad {
     private static Integer[] copyArr4 = new Integer [ masterArr4.length ];
 
     public static void main( String [] args ) throws IOException {
-        /* todo: generate arrays
-         * todo: each array should be at least 2x the previous; at least 0.5 seconds to complete sort
-         * todo: 3 arrays, make copy each time probably? have to run 3 times each sort
-         * todo: write results to a .csv?
-         */
 
         FileWriter w = new FileWriter( new File( "data.csv" ), true );
 
