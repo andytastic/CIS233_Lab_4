@@ -14,8 +14,101 @@ public class L4233AMad {
 
     public static <AnyType extends Comparable<? super AnyType>> void shellsort(AnyType[] a) {
         // todo: make gapLength set gap sequence?
-        for (int gap = a.length / 2; gap > 0;
-             gap = gap == 2 ? 1 : (int) (gap / 2.2))
+        for (int gap = a.length / 2; gap > 0; gap = gap / 2 )
+            for (int i = gap; i < a.length; i++) {
+                AnyType tmp = a[i];
+                int j = i;
+
+                for (; j >= gap && tmp.compareTo(a[j - gap]) < 0; j -= gap)
+                    a[j] = a[j - gap];
+                a[j] = tmp;
+            }
+    }
+
+    // ====================================================
+    //                    Gonnet
+    // ====================================================
+
+    public static <AnyType extends Comparable<? super AnyType>> void gonnet( AnyType [] a )
+    {
+        for ( int gap = a.length / 2; gap > 0; gap = gap == 2 ? 1 : (int) ( gap / 2.2 ) )
+            for (int i = gap; i < a.length; i++) {
+                AnyType tmp = a[i];
+                int j = i;
+
+                for (; j >= gap && tmp.compareTo(a[j - gap]) < 0; j -= gap)
+                    a[j] = a[j - gap];
+                a[j] = tmp;
+            }
+    }
+
+    // ====================================================
+    //                    Hibbard
+    // ====================================================
+
+    public static <AnyType extends Comparable<? super AnyType>> void hibbard( AnyType [] a )
+    {
+        int count = 1, gap = 1;
+        while( gap < a.length )
+        {
+            gap = (int) Math.pow( 2, count ) - 1;
+            count++;
+        }
+
+        for ( ; gap > 0; gap = gap == 2 ? 1 : gap / 2)
+            for (int i = gap; i < a.length; i++) {
+                AnyType tmp = a[i];
+                int j = i;
+
+                for (; j >= gap && tmp.compareTo(a[j - gap]) < 0; j -= gap)
+                    a[j] = a[j - gap];
+                a[j] = tmp;
+            }
+    }
+
+    // ====================================================
+    //                    Sedgewick
+    // ====================================================
+
+    public static <AnyType extends Comparable<? super AnyType>> void sedgewick( AnyType [] a )
+    {
+        int [] sedArray = {0, 1, 5, 19, 41, 109, 209, 505, 929, 2161, 3905, 8929, 16001, 36289,
+                64769, 146305, 260609, 587521, 1045505, 2352689, 4188161, 9427969, 16764929 };
+
+        int count = 0, gap = 0;
+
+        while( gap < a.length )
+        {
+            gap = sedArray[count];
+            count++;
+        }
+
+        for ( ; gap > 0; gap = sedArray[ count = count - 1] )
+        {
+            for (int i = gap; i < a.length; i++) {
+                AnyType tmp = a[i];
+                int j = i;
+
+                for (; j >= gap && tmp.compareTo(a[j - gap]) < 0; j -= gap)
+                    a[j] = a[j - gap];
+                a[j] = tmp;
+            }
+        }
+    }
+
+    // ====================================================
+    //                    Knuth
+    // ====================================================
+
+    public static <AnyType extends Comparable<? super AnyType>> void knuth( AnyType [] a )
+    {
+        int n = a.length / 3;
+
+        int gap = 1;
+        while( gap < n )
+            gap = (3 * gap) + 1;
+
+        for( ; gap >= 1; gap = gap/3 )
             for (int i = gap; i < a.length; i++) {
                 AnyType tmp = a[i];
                 int j = i;
@@ -181,7 +274,7 @@ public class L4233AMad {
                                                                            String sort, FileWriter w ) throws IOException {
         long begin;
         double end = -1;
-        StringBuilder sb = new StringBuilder();
+        double average = 0;
 
         for( int i = 1; i <= RUNS; i++ )
         {
@@ -190,6 +283,36 @@ public class L4233AMad {
             {
                 begin = System.nanoTime();
                 shellsort( copyArr );
+                end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
+            }
+            else if ( sort == "Quicksort" )
+            {
+                begin = System.nanoTime();
+                quicksort( copyArr );
+                end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
+            }
+            else if ( sort == "Gonnet" )
+            {
+                begin = System.nanoTime();
+                gonnet( copyArr );
+                end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
+            }
+            else if ( sort == "Hibbard" )
+            {
+                begin = System.nanoTime();
+                hibbard( copyArr );
+                end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
+            }
+            else if ( sort == "Sedgewick" )
+            {
+                begin = System.nanoTime();
+                sedgewick( copyArr );
+                end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
+            }
+            else if ( sort == "Knuth" )
+            {
+                begin = System.nanoTime();
+                knuth( copyArr );
                 end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
             }
             else if ( sort == "Mergesort" )
@@ -205,18 +328,40 @@ public class L4233AMad {
                 end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
             }
             System.out.println( "\t" + sort + " run " + i + " time taken: " + end + " seconds");
-            if( i == RUNS )
-                sb.append( end + "\n");
-            else
-                sb.append( end + ",");
+            average += end;
         }
+        average /= RUNS;
+        w.append(average + ",");
+    }
 
-        w.append( sb );
+    public static void sort( String sort, FileWriter w ) throws IOException
+    {
+        System.out.println("============= " + sort.toUpperCase() + " =============");
+        w.append(sort + ",");
+        System.out.println("----- Array 1: 500,000 items -----");
+        sort( masterArr1, copyArr1, sort, w );
+        System.out.println("----- Array 2: 1,000,000 items -----");
+        sort( masterArr2, copyArr2, sort, w );
+        System.out.println("----- Array 3: 5,000,000 items -----");
+        sort( masterArr3, copyArr3, sort, w );
+        System.out.println("----- Array 4: 10,000,000 items -----");
+        sort( masterArr4, copyArr4, sort, w );
+        w.append("\n");
     }
 
     private static long SECOND_FACTOR = 1000000000;
     private static int MAX_VALUE = 1000;
-    private static int RUNS = 3;
+    private static int RUNS = 5;
+
+    private static Integer[] masterArr1 = new Integer[ 500000 ];
+    private static Integer[] masterArr2 = new Integer[ 1000000 ];
+    private static Integer[] masterArr3 = new Integer[ 5000000 ];
+    private static Integer[] masterArr4 = new Integer[ 10000000 ];
+
+    private static Integer[] copyArr1 = new Integer [ masterArr1.length ];
+    private static Integer[] copyArr2 = new Integer [ masterArr2.length ];
+    private static Integer[] copyArr3 = new Integer [ masterArr3.length ];
+    private static Integer[] copyArr4 = new Integer [ masterArr4.length ];
 
     public static void main( String [] args ) throws IOException {
         /* todo: generate arrays
@@ -226,14 +371,6 @@ public class L4233AMad {
          */
 
         FileWriter w = new FileWriter( new File( "data.csv" ), true );
-
-        Integer[] masterArr1 = new Integer[ 1000000 ];
-        Integer[] masterArr2 = new Integer[ 5000000 ];
-        Integer[] masterArr3 = new Integer[ 10000000 ];
-
-        Integer[] copyArr1 = new Integer [ masterArr1.length ];
-        Integer[] copyArr2 = new Integer [ masterArr2.length ];
-        Integer[] copyArr3 = new Integer [ masterArr3.length ];
 
         Random r = new Random();
 
@@ -251,33 +388,64 @@ public class L4233AMad {
         for (int i = 0; i < masterArr3.length; i++) {
             masterArr3[i] = new Integer(r.nextInt(MAX_VALUE));
         }
-        System.out.println("arr3 popluated... ");
+        System.out.print("arr3 popluated... ");
+
+        for (int i = 0; i < masterArr4.length; i++) {
+            masterArr4[i] = new Integer(r.nextInt(MAX_VALUE));
+        }
+        System.out.println("arr4 popluated... ");
 
         System.out.println("Population completed.");
 
-        w.append("Shellsort\n");
-        System.out.println("----- Array 1: 1,000,000 items -----");
-        sort( masterArr1, copyArr1, "Shellsort", w );
-        System.out.println("----- Array 2: 5,000,000 items -----");
-        sort( masterArr2, copyArr2, "Shellsort", w );
-        System.out.println("----- Array 3: 10,000,000 items -----");
-        sort( masterArr3, copyArr3, "Shellsort", w );
+        w.append(",\"500,000\",\"1,000,000\",\"5,000,000\",\"10,000,000\"\n");
 
-        w.append("Mergesort\n");
-        System.out.println("\n----- Array 1: 1,000,000 items -----");
+        sort( "Shellsort", w );
+        sort( "Gonnet", w );
+        sort( "Hibbard", w );
+        sort( "Sedgewick", w );
+        sort( "Knuth", w );
+        sort( "Heapsort", w );
+        sort( "Mergesort", w );
+        sort( "Quicksort", w );
+
+        /*
+        System.out.println("============= MERGESORT =============");
+        w.append("Mergesort,");
+        System.out.println("----- Array 1: 500,000 items -----");
         sort( masterArr1, copyArr1, "Mergesort", w );
-        System.out.println("----- Array 2: 5,000,000 items -----");
+        System.out.println("----- Array 2: 1,000,000 items -----");
         sort( masterArr2, copyArr2, "Mergesort", w );
-        System.out.println("----- Array 3: 10,000,000 items -----");
+        System.out.println("----- Array 3: 5,000,000 items -----");
         sort( masterArr3, copyArr3, "Mergesort", w );
+        System.out.println("----- Array 4: 10,000,000 items -----");
+        sort( masterArr4, copyArr4, "Mergesort", w );
+        w.append("\n");
 
-        w.append("Heapsort\n");
-        System.out.println("\n----- Array 1: 1,000,000 items -----");
+
+        System.out.println("============= HEAPSORT =============");
+        w.append("Heapsort,");
+        System.out.println("----- Array 1: 500,000 items -----");
         sort( masterArr1, copyArr1, "Heapsort", w );
-        System.out.println("----- Array 2: 5,000,000 items -----");
+        System.out.println("----- Array 2: 1,000,000 items -----");
         sort( masterArr2, copyArr2, "Heapsort", w );
-        System.out.println("----- Array 3: 10,000,000 items -----");
+        System.out.println("----- Array 3: 5,000,000 items -----");
         sort( masterArr3, copyArr3, "Heapsort", w );
+        System.out.println("----- Array 4: 10,000,000 items -----");
+        sort( masterArr4, copyArr4, "Heapsort", w );
+        w.append("\n");
+
+        System.out.println("============= QUICKSORT =============");
+        w.append("Quicksort,");
+        System.out.println("----- Array 1: 500,000 items -----");
+        sort( masterArr1, copyArr1, "Quicksort", w );
+        System.out.println("----- Array 2: 1,000,000 items -----");
+        sort( masterArr2, copyArr2, "Quicksort", w );
+        System.out.println("----- Array 3: 5,000,000 items -----");
+        sort( masterArr3, copyArr3, "Quicksort", w );
+        System.out.println("----- Array 4: 10,000,000 items -----");
+        sort( masterArr4, copyArr4, "Quicksort", w );
+        w.append("\n");
+        */
 
         w.close();
     }
