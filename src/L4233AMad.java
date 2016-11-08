@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -175,12 +178,12 @@ public class L4233AMad {
     }
 
     private static <AnyType extends Comparable<? super AnyType>> void sort(AnyType[] masterArr, AnyType[] copyArr,
-                                                                           String sort)
-    {
+                                                                           String sort, FileWriter w ) throws IOException {
         long begin;
         double end = -1;
+        StringBuilder sb = new StringBuilder();
 
-        for( int i = 1; i <= 3; i++ )
+        for( int i = 1; i <= RUNS; i++ )
         {
             resetArray( masterArr, copyArr );
             if( sort == "Shellsort" )
@@ -202,20 +205,27 @@ public class L4233AMad {
                 end = (double) ( System.nanoTime() - begin ) / SECOND_FACTOR;
             }
             System.out.println( "\t" + sort + " run " + i + " time taken: " + end + " seconds");
+            if( i == RUNS )
+                sb.append( end + "\n");
+            else
+                sb.append( end + ",");
         }
 
+        w.append( sb );
     }
 
     private static long SECOND_FACTOR = 1000000000;
     private static int MAX_VALUE = 1000;
+    private static int RUNS = 3;
 
-    public static void main( String [] args )
-    {
+    public static void main( String [] args ) throws IOException {
         /* todo: generate arrays
          * todo: each array should be at least 2x the previous; at least 0.5 seconds to complete sort
          * todo: 3 arrays, make copy each time probably? have to run 3 times each sort
          * todo: write results to a .csv?
          */
+
+        FileWriter w = new FileWriter( new File( "data.csv" ), true );
 
         Integer[] masterArr1 = new Integer[ 1000000 ];
         Integer[] masterArr2 = new Integer[ 5000000 ];
@@ -245,26 +255,30 @@ public class L4233AMad {
 
         System.out.println("Population completed.");
 
+        w.append("Shellsort\n");
         System.out.println("----- Array 1: 1,000,000 items -----");
-        sort( masterArr1, copyArr1, "Shellsort" );
+        sort( masterArr1, copyArr1, "Shellsort", w );
         System.out.println("----- Array 2: 5,000,000 items -----");
-        sort( masterArr2, copyArr2, "Shellsort" );
+        sort( masterArr2, copyArr2, "Shellsort", w );
         System.out.println("----- Array 3: 10,000,000 items -----");
-        sort( masterArr3, copyArr3, "Shellsort" );
+        sort( masterArr3, copyArr3, "Shellsort", w );
 
+        w.append("Mergesort\n");
         System.out.println("\n----- Array 1: 1,000,000 items -----");
-        sort( masterArr1, copyArr1, "Mergesort" );
+        sort( masterArr1, copyArr1, "Mergesort", w );
         System.out.println("----- Array 2: 5,000,000 items -----");
-        sort( masterArr2, copyArr2, "Mergesort" );
+        sort( masterArr2, copyArr2, "Mergesort", w );
         System.out.println("----- Array 3: 10,000,000 items -----");
-        sort( masterArr3, copyArr3, "Mergesort" );
+        sort( masterArr3, copyArr3, "Mergesort", w );
 
+        w.append("Heapsort\n");
         System.out.println("\n----- Array 1: 1,000,000 items -----");
-        sort( masterArr1, copyArr1, "Heapsort" );
+        sort( masterArr1, copyArr1, "Heapsort", w );
         System.out.println("----- Array 2: 5,000,000 items -----");
-        sort( masterArr2, copyArr2, "Heapsort" );
+        sort( masterArr2, copyArr2, "Heapsort", w );
         System.out.println("----- Array 3: 10,000,000 items -----");
-        sort( masterArr3, copyArr3, "Heapsort" );
+        sort( masterArr3, copyArr3, "Heapsort", w );
 
+        w.close();
     }
 }
