@@ -408,45 +408,6 @@ public class L4233AMad {
         sort( "Mergesort", w );
         sort( "Quicksort", w );
 
-        /*
-        System.out.println("============= MERGESORT =============");
-        w.append("Mergesort,");
-        System.out.println("----- Array 1: 500,000 items -----");
-        sort( masterArr1, copyArr1, "Mergesort", w );
-        System.out.println("----- Array 2: 1,000,000 items -----");
-        sort( masterArr2, copyArr2, "Mergesort", w );
-        System.out.println("----- Array 3: 5,000,000 items -----");
-        sort( masterArr3, copyArr3, "Mergesort", w );
-        System.out.println("----- Array 4: 10,000,000 items -----");
-        sort( masterArr4, copyArr4, "Mergesort", w );
-        w.append("\n");
-
-
-        System.out.println("============= HEAPSORT =============");
-        w.append("Heapsort,");
-        System.out.println("----- Array 1: 500,000 items -----");
-        sort( masterArr1, copyArr1, "Heapsort", w );
-        System.out.println("----- Array 2: 1,000,000 items -----");
-        sort( masterArr2, copyArr2, "Heapsort", w );
-        System.out.println("----- Array 3: 5,000,000 items -----");
-        sort( masterArr3, copyArr3, "Heapsort", w );
-        System.out.println("----- Array 4: 10,000,000 items -----");
-        sort( masterArr4, copyArr4, "Heapsort", w );
-        w.append("\n");
-
-        System.out.println("============= QUICKSORT =============");
-        w.append("Quicksort,");
-        System.out.println("----- Array 1: 500,000 items -----");
-        sort( masterArr1, copyArr1, "Quicksort", w );
-        System.out.println("----- Array 2: 1,000,000 items -----");
-        sort( masterArr2, copyArr2, "Quicksort", w );
-        System.out.println("----- Array 3: 5,000,000 items -----");
-        sort( masterArr3, copyArr3, "Quicksort", w );
-        System.out.println("----- Array 4: 10,000,000 items -----");
-        sort( masterArr4, copyArr4, "Quicksort", w );
-        w.append("\n");
-        */
-
         w.close();
     }
 }
