@@ -400,10 +400,10 @@ public class L4233AMad {
         w.append(",\"500,000\",\"1,000,000\",\"5,000,000\",\"10,000,000\"\n");
 
         sort( "Shellsort", w );
-        sort( "Gonnet", w );
         sort( "Hibbard", w );
-        sort( "Sedgewick", w );
         sort( "Knuth", w );
+        sort( "Sedgewick", w );
+        sort( "Gonnet", w );
         sort( "Heapsort", w );
         sort( "Mergesort", w );
         sort( "Quicksort", w );
