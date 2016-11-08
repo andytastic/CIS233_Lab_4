@@ -391,7 +391,8 @@ public class L4233AMad {
 
         System.out.println("Population completed.");
 
-        w.append(",\"500,000\",\"1,000,000\",\"5,000,000\",\"10,000,000\"\n");
+        w.append("," + masterArr1.length + "," + masterArr2.length + ","
+                + masterArr3.length + "," + masterArr4.length + "\n");
 
         sort( "Shellsort", w );
         sort( "Hibbard", w );
